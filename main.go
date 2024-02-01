@@ -1,8 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"os"
+
+	"golang.org/x/term"
 )
 
 func main() {
@@ -48,20 +51,74 @@ func printHelp() {
 
 func encryptHandle() {
 
+	if len(os.Args) < 3 {
+		fmt.Println("missing the path to the file. For more info, run go run . help")
+		os.Exit(0)
+	}
+
+	file := os.Args[2]
+	if !validateFile(file) {
+		panic("File not found")
+	}
+
+	password := getPassword()
+	fmt.Println("\nEncrypting...")
+	filecrypt.Encrypt(file, password)
+	fmt.Println("\n file succesfully protected")
+
 }
 
 func decryptHandle() {
 
+	if len(os.Args) < 3 {
+		fmt.Println("missing the path to the file. For more info, run go run . help")
+		os.Exit(0)
+	}
+
+	file := os.Args[2]
+	if !validateFile(file) {
+		panic("File not found")
+	}
+
+	fmt.Print("Enter password:")
+	password, _ := term.ReadPassword(0)
+	fmt.Println("\nDecrypting...")
+	filecrypt.Decrypt(file, password)
+	fmt.Println("\n file sucessfully decrypted")
+
 }
 
-func getPassword() {
+func getPassword() []byte {
+
+	fmt.Print("Enter password")
+	password, _ := term.ReadPassword(0)
+	fmt.Print("\nConfirm Password: ")
+	password2, _ := term.ReadPassword(0)
+	if !validatePassword(password, password2) {
+		fmt.Print("\nPasswords do not match. Please try again.")
+		return getPassword()
+	}
+
+	return password
 
 }
 
-func validatePassword() {
+func validatePassword(password1 []byte, password2 []byte) bool {
+
+	if !bytes.Equal(password1, password2) {
+		return false
+	}
+
+	return true
 
 }
 
-func validateFile() {
+func validateFile(file string) bool {
+
+	if _, err := os.Stat(file); os.IsNotExist(err) {
+		return false
+	}
+
+	return true
 
 }
