@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/JoseHurtadoBaeza/Golang-File-Encryption/filecrypt"
 	"golang.org/x/term"
 )
 
@@ -80,7 +81,7 @@ func decryptHandle() {
 		panic("File not found")
 	}
 
-	fmt.Print("Enter password:")
+	fmt.Println("Enter password:")
 	password, _ := term.ReadPassword(0)
 	fmt.Println("\nDecrypting...")
 	filecrypt.Decrypt(file, password)
@@ -90,9 +91,9 @@ func decryptHandle() {
 
 func getPassword() []byte {
 
-	fmt.Print("Enter password")
+	fmt.Println("Enter password:")
 	password, _ := term.ReadPassword(0)
-	fmt.Print("\nConfirm Password: ")
+	fmt.Println("\nConfirm Password: ")
 	password2, _ := term.ReadPassword(0)
 	if !validatePassword(password, password2) {
 		fmt.Print("\nPasswords do not match. Please try again.")
@@ -105,11 +106,7 @@ func getPassword() []byte {
 
 func validatePassword(password1 []byte, password2 []byte) bool {
 
-	if !bytes.Equal(password1, password2) {
-		return false
-	}
-
-	return true
+	return bytes.Equal(password1, password2)
 
 }
 

@@ -88,8 +88,11 @@ func Decrypt(source string, password []byte) {
 	salt := ciphertext[len(ciphertext)-12:] // We take the last 12 digits of the encrypted file to get the salt
 	str := hex.EncodeToString(salt)
 	nonce, err := hex.DecodeString(str)
+	if err != nil {
+		panic(err.Error())
+	}
 
-	dk := pbkdf2.Ley(name, nonce, 4096, 32, sha1.New)
+	dk := pbkdf2.Key(key, nonce, 4096, 32, sha1.New)
 	block, err := aes.NewCipher(dk)
 	if err != nil {
 		panic(err.Error())
